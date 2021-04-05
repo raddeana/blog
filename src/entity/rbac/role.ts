@@ -1,16 +1,32 @@
+/**
+ * 用户实体
+ * @author Philip
+ */
 import { EntityModel } from '@midwayjs/orm';
-import { Column, PrimaryGeneratedColumn, OneToMany, JoinColumn } from "typeorm";
-import { Photo } from './entity/photo';
+import { Column, PrimaryGeneratedColumn, ManyToMany, OneToMany, JoinTable } from "typeorm";
+import { Menu } from "@/entity/rbac/menu";
+import { User } from "@/entity/rbac/user";
+import BaseEntity from "@/entity/BaseEntity";
+import { RoleType } from '@/type/role';
 
-@@EntityModel()
-export class Author {
+@EntityModel('author')
+export class Role extends BaseEntity<RoleType> {
+    constructor (entity?: RoleType) {
+        if (entity) {
+            super(entity);
+        }
+    }
 
-  @PrimaryGeneratedColumn()
-  id: number;
+    @PrimaryGeneratedColumn()
+    id: number;
 
-  @Column()
-  name: string;
+    @Column()
+    name: string;
 
-  @OneToMany(type => Photo, photo => photo.author) // note: we will create author property in the Photo class below
-  photos: Photo[];
+    @ManyToMany(type => Menu, menu => menu.roles)
+    @JoinTable()
+    menus: Menu[];
+
+    @OneToMany(type => User, user => user.role)
+    users: User[];
 }

@@ -2,26 +2,37 @@
  * 用户实体
  * @author Philip
  */
-import { EntityModel } from '@midwayjs/orm';
-import { Column, PrimaryGeneratedColumn } from 'typeorm';
-import { Author } from "./author";
+import { EntityModel } from "@midwayjs/orm";
+import { Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
+import { Role } from "@/entity/rbac/role";
+import ArticleEntity from "@/entity/article";
+import BaseEntity from "@/entity/BaseEntity";
+import { UserType } from '@/type/user';
 
 @EntityModel('user')
-export default class User {
+export default class User extends BaseEntity<UserType> {
+  constructor (entity?: UserType) {
+      if (entity) {
+          super(entity);
+      }
+  }
+
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({
-    length: 32
+    length: 16
   })
   username: string;
   
   @Column({
-    length: 32
+    length: 16
   })
   password: string;
   
-  @Column('text')
+  @Column({
+    length: 16
+  })
   nickname: string;
   
   @Column({
@@ -29,7 +40,9 @@ export default class User {
   })
   avatar: string;
 
-  @ManyToMany(type => Photo, photo => photo.albums)
-  @JoinTable()
-  author: Author;
+  @ManyToOne(type => Role, role => role.users)
+  role: Role;
+
+  @ManyToOne(type => ArticleEntity, article => article.author)
+  articles: ArticleEntity[];
 }

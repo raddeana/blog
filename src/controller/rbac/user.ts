@@ -1,56 +1,73 @@
-import { Inject, Controller, Post, Provide, Query } from '@midwayjs/decorator';
-import { Context } from 'egg';
-import { UserService } from '../service/user';
+/**
+ * 用户管理
+ * @author Philip
+ */
+import {
+    Provide,
+    Inject,
+    Controller,
+    Post,
+    Get,
+    Del,
+    Put,
+    Param,
+    Query,
+    Body
+} from "@midwayjs/decorator";
+
+import { Context } from "egg";
+import { UserService } from "@/service/rbac/user";
+import { UserType, UserQueryType } from "@/type/user";
+import { CreateApiDoc } from "@midwayjs/swagger";
+import UserEntity from '@/entity/user';
 
 @Provide()
 @Controller('/api')
-export class APIController {
+export class UserController {
   @Inject()
   ctx: Context;
 
   @Inject()
-  userService: UserService;
+  UserService: UserService;
 
   @CreateApiDoc()
-    .summary('get user')
-    .description('This is a open api for get user')
+    .summary('新建用户')
     .build()
-
-  @Post('/get_user')
-  async getUser(@Query() uid) {
-    const user = await this.userService.getUser({ uid });
-    return { success: true, message: 'OK', data: user };
+  @Post('/user')
+  async create (@Body() user: string) : Promise<UserEntity> {
+    await this.UserService.create(user);
   }
 
   @CreateApiDoc()
-    .summary('get user')
-    .description('This is a open api for get user')
-    .param('user id', {
-      required: true,
-      example: '123456'
-    })
-    .param({
-      description: 'This is a user name'
-    })
+    .summary('编辑更新用户')
     .build()
+  @Put('/user')
+  async update (@Body() user: string) : void {
+    return await this.UserService.update(user);
+  }
 
-    @CreateApiDoc()
-    .summary('get user')
-    .description('This is a open api for get user')
-    .respond(200)
-    .respond(302, 'redirect to another URL')
-    .respond(201, 'response a text data', 'text', {
-      headers: {
-        'x-schema': {
-          description: 'set a schema header',
-          type: 'string'
-        }
-      },
-      example: 'this is a reponse data'
-    })
-    .respond(500, 'error in response', 'json', {
-      example: {
-        a: 1
-      }
-    })
+  @CreateApiDoc()
+    .summary('获取用户实例数据')
+    .build()
+  @Get('/user/:uid')
+  async get(@Param() id: number): Promise<UserEntity> {
+    return await this.UserService.get(uid);
+  }
+
+  @CreateApiDoc()
+    .summary('获取用户列表数据')
+    .build()
+  @Get('/users')
+  async query(@Query() query: UserQueryType): Promise<queryResult<ArticleEntity>> {
+    return await this.UserService.query(query);
+  }
+
+  @CreateApiDoc()
+    .summary('批量删除用户')
+    .build()
+  @Del('/users')
+  async delete (@Query() ids: string) : void {
+    ids = ids.split(',');
+    await this.UserService.del(ids);
+  }
 }

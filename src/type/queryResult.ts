@@ -1,0 +1,1 @@
+export type queryResult<T> = [Array<T>, number]

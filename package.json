@@ -28,6 +28,7 @@
     "mwts": "^1.0.5",
     "swagger-ui-dist": "^3.43.0",
     "ts-jest": "^26.2.0",
+    "tsconfig-paths": "^3.9.0",
     "typescript": "^4.0.0"
   },
   "engines": {
