@@ -13,7 +13,7 @@ export type UserType = {
     username: string;
     password: string;
     role: RoleType;
-    articles: ArticleType[];
+    articles: Array<ArticleType>;
 }
 
 export type UserQueryType = QueryType & {

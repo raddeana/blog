@@ -3,11 +3,12 @@
  * @author Philip
  */
 import { QueryType } from '@/type/query';
+import { MenuType } from '@/type/menus';
 
-export type RoleType {
+export type RoleType = {
     id: number;
-    name: string,
-    menus: Array;
+    name: string;
+    menus: Array<MenuType>;
 }
 
 export type RoleQueryType = QueryType & {

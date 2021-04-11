@@ -1,5 +1,5 @@
 /**
- * 接口
+ * 文章类型声明
  * @author Philip
  */
 import { UserType } from '@/type/user';

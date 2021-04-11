@@ -18,7 +18,8 @@ import { CreateApiDoc } from "@midwayjs/swagger";
 import { Context } from "egg";
 import { ArticleService } from "@/service/article";
 import { ArticleType, ArticleQueryType } from "@/type/article";
-import ArticleEntity from '@/entity/article';
+import { QueryResult } from '@/type/queryResult';
+import Article from '@/entity/article';
 
 @Provide()
 @Controller('/api')
@@ -33,7 +34,7 @@ export class ArticleController {
     .summary('新建文章')
     .build()
   @Post('/article')
-  async create (@Body() article: ArticleType) {
+  async create (@Body() article: ArticleType) : Promise<void> {
     await this.ArticleService.create(article);
   }
 
@@ -41,7 +42,7 @@ export class ArticleController {
     .summary('更新文章')
     .build()
   @Put('/article')
-  async update (@Body() article: ArticleType) {
+  async update (@Body() article: ArticleType) : Promise<void> {
     await this.ArticleService.update(article);
   }
 
@@ -49,7 +50,7 @@ export class ArticleController {
     .summary('获取文章实例数据')
     .build()
   @Get('/article/:id')
-  async get(@Param() id: number): Promise<ArticleEntity> {
+  async get(@Param() id: number) : Promise<Article> {
     return await this.ArticleService.get(id);
   }
 
@@ -57,7 +58,7 @@ export class ArticleController {
     .summary('获取文章列表数据')
     .build()
   @Get('/articles')
-  async query(@Query() query: ArticleQueryType) {
+  async query(@Query() query: ArticleQueryType) : Promise<QueryResult<Article>> {
     return await this.ArticleService.query(query);
   }
 
@@ -65,7 +66,7 @@ export class ArticleController {
     .summary('批量删除文章')
     .build()
   @Del('/articles')
-  async delete (@Query() ids: string) {
+  async delete (@Query() ids: string) : Promise<void> {
     await this.ArticleService.removeByIds(ids.split(',').map(id => parseInt(id)));
   }
 }

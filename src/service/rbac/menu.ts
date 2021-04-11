@@ -2,25 +2,25 @@
  * 角色
  * @author Philip
  */
-import { Provide, Inject, Func } from '@midwayjs/decorator';
+import { Provide } from '@midwayjs/decorator';
 import { InjectEntityModel } from '@midwayjs/orm';
-import { Repository } from 'typeorm';
-import MenuEntity from '@/entity/menu';
+import { Repository, getManager, UpdateResult } from 'typeorm';
+import Menu from '@/entity/rbac/menu';
 import { MenuType, MenuQueryType } from '@/type/menu';
-import { queryResult } from '@/type/queryResult';
+import { QueryResult } from '@/type/queryResult';
 
 @Provide()
 export class MenuService {
-  @InjectEntityModel(MenuEntity)
-  menuEntity: Repository<MenuEntity>;
+  @InjectEntityModel(Menu)
+  menuEntity: Repository<Menu>;
 
   /**
    * 新建用户
    * @param {MenuType} 
    * @return {void}
    */
-  async create (menu: MenuType) {
-    return await this.menuEntity.save(new MenuEntity(menu));
+  async create (menu: MenuType) : Promise<Menu> {
+    return await this.menuEntity.save(new Menu(menu));
   }
 
   /**
@@ -28,7 +28,7 @@ export class MenuService {
    * @param {MenuQueryType}
    * @return {void}
    */
-  async query (query: MenuQueryType): queryResult {
+  async query (query: MenuQueryType) : Promise<QueryResult<Menu>> {
     let [data, total] = await this.menuEntity.findAndCount(query);
 
     return [data, total];
@@ -39,8 +39,8 @@ export class MenuService {
    * @param {MenuType}
    * @return {void}
    */
-  async update (menu: MenuType) {
-    return await this.menuEntity.updateById(menu.id, menu);
+  async update (menu: MenuType) : Promise<UpdateResult> {
+    return await this.menuEntity.update(menu.id, menu);
   }
 
   /**
@@ -48,7 +48,7 @@ export class MenuService {
    * @param {id}
    * @return {void}
    */
-  async get (id: number) {
+  async get (id: number) : Promise<Menu>  {
     return await this.menuEntity.findOne({ id });
   }
 
@@ -57,7 +57,15 @@ export class MenuService {
    * @param {number[]}
    * @return {void}
    */
-  async removeByIds (ids: number[]) {
-    return await this.menuEntity.removeByIds(ids);
+  async removeByIds (ids: number[]) : Promise<void>  {
+    let entities = [];
+
+    ids.forEach(async (id) => {
+      entities.push(await this.menuEntity.findOne({ id }));
+    });
+  
+    await getManager().transaction(async transactionalEntityManager => {
+      await transactionalEntityManager.remove(Menu, entities);
+    });
   }
 }

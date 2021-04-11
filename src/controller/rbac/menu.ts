@@ -19,6 +19,8 @@ import { Context } from "egg";
 import { MenuService } from "@/service/rbac/menu";
 import { MenuType, MenuQueryType } from "@/type/menu";
 import { CreateApiDoc } from "@midwayjs/swagger";
+import { QueryResult } from '@/type/queryResult';
+import Menu from '@/entity/rbac/menu';
 
 @Provide()
 @Controller('/api')
@@ -33,7 +35,7 @@ export class MenuController {
     .summary('新建角色')
     .build()
   @Post('/menu')
-  async create (@Body() menu: string) : void {
+  async create (@Body() menu: MenuType) : Promise<void> {
     await this.MenuService.create(menu);
   }
 
@@ -41,7 +43,7 @@ export class MenuController {
     .summary('编辑更新角色')
     .build()
   @Put('/menu')
-  async update (@Body() menu: string) : void {
+  async update (@Body() menu: MenuType) : Promise<void> {
     await this.MenuService.update(menu);
   }
 
@@ -49,7 +51,7 @@ export class MenuController {
     .summary('获取角色实例数据')
     .build()
   @Get('/menu/:id')
-  async get(@Param() id: string): Promise<MenuType> {
+  async get(@Param() id: number) : Promise<Menu> {
     return await this.MenuService.get(id);
   }
 
@@ -57,7 +59,7 @@ export class MenuController {
     .summary('获取角色列表数据')
     .build()
   @Get('/menus')
-  async query(@Query() query: string): Promise<MenuQueryType> {
+  async query(@Query() query: MenuQueryType) : Promise<QueryResult<Menu>> {
     return await this.MenuService.query(query);
   }
 
@@ -65,8 +67,7 @@ export class MenuController {
     .summary('批量删除角色')
     .build()
   @Del('/menus')
-  async delete (@Query() ids: string) : void {
-    ids = ids.split(',');
-    await this.MenuService.del(ids);
+  async delete (@Query() ids: string) : Promise<void> {
+    await this.MenuService.removeByIds(ids.split(',').map(id => parseInt(id)));
   }
 }

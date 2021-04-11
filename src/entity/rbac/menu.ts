@@ -4,14 +4,14 @@
  */
 import { EntityModel } from '@midwayjs/orm';
 import { Column, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
-import { Role } from "@/entity/rbac/role";
+import RoleEntity from "@/entity/rbac/role";
 import BaseEntity from "@/entity/BaseEntity";
 import { MenuType } from '@/type/menu';
 
 
 @EntityModel('menu')
 export default class Menu extends BaseEntity<MenuType> {
-  constructor (entity?: RoleType) {
+  constructor (entity?: MenuType) {
       if (entity) {
           super(entity);
       }
@@ -30,6 +30,6 @@ export default class Menu extends BaseEntity<MenuType> {
   })
   code: string;
 
-  @ManyToMany(type => Role, role => role.menus)
-  roles: Role[];
+  @ManyToMany(type => RoleEntity, role => role.menus)
+  roles: RoleEntity[];
 }

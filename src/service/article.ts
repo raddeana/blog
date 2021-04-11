@@ -4,22 +4,23 @@
  */
 import { Provide } from '@midwayjs/decorator';
 import { InjectEntityModel } from '@midwayjs/orm';
-import { Repository, getManager } from 'typeorm';
-import ArticleEntity from '@/entity/article';
+import { Repository, getManager, UpdateResult } from 'typeorm';
+import Article from '@/entity/article';
 import { ArticleType, ArticleQueryType } from '@/type/article';
+import { QueryResult } from '@/type/queryResult';
 
 @Provide()
 export class ArticleService {
-  @InjectEntityModel(ArticleEntity)
-  articleEntity: Repository<ArticleEntity>;
+  @InjectEntityModel(Article)
+  articleEntity: Repository<Article>;
 
   /**
    * 新建用户
    * @param {ArticleType} 
    * @return {void}
    */
-  async create (article: ArticleType) {
-    return await this.articleEntity.save(new ArticleEntity(article));
+  async create (article: ArticleType) : Promise<Article> {
+    return await this.articleEntity.save(new Article(article));
   }
 
   /**
@@ -27,7 +28,7 @@ export class ArticleService {
    * @param {ArticleQueryType}
    * @return {void}
    */
-  async query (query: ArticleQueryType) {
+  async query (query: ArticleQueryType) : Promise<QueryResult<Article>> {
     let [data, total] = await this.articleEntity.findAndCount(query);
 
     return [data, total];
@@ -38,7 +39,7 @@ export class ArticleService {
    * @param {ArticleType}
    * @return {void}
    */
-  async update (article: ArticleType) {
+  async update (article: ArticleType) : Promise<UpdateResult> {
     return await this.articleEntity.update(article.id, article);
   }
 
@@ -47,7 +48,7 @@ export class ArticleService {
    * @param {id}
    * @return {void}
    */
-  async get (id: number) {
+  async get (id: number) : Promise<Article> {
     return await this.articleEntity.findOne({ id });
   }
 
@@ -56,7 +57,7 @@ export class ArticleService {
    * @param {number[]}
    * @return {void}
    */
-  async removeByIds (ids: number[]) {
+  async removeByIds (ids: number[]) : Promise<void>  {
     let entities = [];
 
     ids.forEach(async (id) => {
@@ -64,7 +65,7 @@ export class ArticleService {
     });
   
     await getManager().transaction(async transactionalEntityManager => {
-      await transactionalEntityManager.remove(ArticleEntity, entities);
+      await transactionalEntityManager.remove(Article, entities);
     });
   }
 }

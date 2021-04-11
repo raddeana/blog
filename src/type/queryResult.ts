@@ -1,1 +1,5 @@
-export type queryResult<T> = [Array<T>, number]
+/**
+ * 查询结果
+ * @author Philip
+ */
+export type QueryResult<T> = [Array<T>, number]

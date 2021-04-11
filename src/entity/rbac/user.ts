@@ -4,7 +4,7 @@
  */
 import { EntityModel } from "@midwayjs/orm";
 import { Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
-import { Role } from "@/entity/rbac/role";
+import Role from "@/entity/rbac/role";
 import ArticleEntity from "@/entity/article";
 import BaseEntity from "@/entity/BaseEntity";
 import { UserType } from '@/type/user';

@@ -8,6 +8,7 @@ import UserEntity from '@/entity/rbac/user';
 import BaseEntity from "@/entity/BaseEntity";
 import { ArticleType } from '@/type/article';
 
+
 @EntityModel('article')
 export default class Article extends BaseEntity<ArticleType> {
   constructor (entity?: ArticleType) {
